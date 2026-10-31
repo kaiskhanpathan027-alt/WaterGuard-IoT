@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}About College Engineering Project{% endblock %}
+
+{% block content %}
+<!-- Project Overview Header -->
+<div style="text-align: center; max-width: 860px; margin: 0 auto 3rem auto;">
+    <span class="badge" style="background: var(--primary-100); color: var(--primary-800); margin-bottom: 0.5rem;">
+        Engineering Capstone Project &bull; Academic Year 2026–2027
+    </span>
+    <h1 style="font-size: 2.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+        Smart Water Quality Monitoring &amp; Analysis System
+    </h1>
+    <div style="font-weight: 700; color: var(--primary-900); font-size: 1.1rem; margin-bottom: 0.25rem;">
+        Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, Maharashtra
+    </div>
+    <div style="font-size: 0.95rem; color: var(--primary-700); font-weight: 600; margin-bottom: 0.85rem;">
+        Department of Computer Science and Design
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; max-width: 760px; margin: 0 auto;">
+        An embedded and cloud-enabled environmental engineering system designed to continuously monitor, evaluate, and classify drinking water quality against international standards (WHO / BIS IS 10500:2012).
+    </p>
+</div>
+
+<!-- Project Architecture Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+    <div class="card">
+        <div class="stat-icon primary" style="margin-bottom: 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+        </div>
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">1. Problem Statement</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Conventional laboratory water testing is time-intensive, expensive, and non-continuous. Delayed detection of chemical or biological contamination poses acute public health hazards. This project automates immediate, onsite telemetry and multi-parametric potability classification.
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="stat-icon safe" style="margin-bottom: 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+        </div>
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">2. Core Methodology</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Hardware sensors capture analog voltage potentials corresponding to Hydrogen Ion activity (pH), electrical conductivity of dissolved solids (TDS), and 90-degree scattered infrared optical light (Turbidity). Readings are digitized and evaluated by our weighted WQI analytical engine.
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="stat-icon moderate" style="margin-bottom: 1rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <line x1="8" y1="21" x2="16" y2="21"></line>
+                <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+        </div>
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;">3. Web &amp; Database Tier</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+            Developed on Python Flask with an optimized SQLite persistence layer. Features role-based access control, cryptographic password hashing, dynamic Chart.js analytics, and automated PDF certification generated via ReportLab.
+        </p>
+    </div>
+</div>
+
+<!-- Hardware & Sensor Integration Details -->
+<div class="card" style="margin-bottom: 3rem;">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                <rect x="9" y="9" width="6" height="6"></rect>
+                <line x1="9" y1="1" x2="9" y2="4"></line>
+                <line x1="15" y1="1" x2="15" y2="4"></line>
+                <line x1="9" y1="20" x2="9" y2="23"></line>
+                <line x1="15" y1="20" x2="15" y2="23"></line>
+                <line x1="20" y1="9" x2="23" y2="9"></line>
+                <line x1="20" y1="14" x2="23" y2="14"></line>
+                <line x1="1" y1="9" x2="4" y2="9"></line>
+                <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+            Sensor Specifications &amp; Interface Standards
+        </h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Sensor Unit</th>
+                    <th>Measured Variable</th>
+                    <th>Range &amp; Accuracy</th>
+                    <th>Microcontroller Interface</th>
+                    <th>Safety Benchmark (WHO / BIS)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>E-201-C pH Sensor</strong></td>
+                    <td>Acidity / Alkalinity (pH)</td>
+                    <td>0.00 &ndash; 14.00 pH (&plusmn;0.05)</td>
+                    <td>Analog ADC Pin (A0) via BNC Board</td>
+                    <td><strong>6.5 &ndash; 8.5 pH</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Analog EC / TDS Sensor</strong></td>
+                    <td>Total Dissolved Solids</td>
+                    <td>0 &ndash; 10,000 mg/L (&plusmn;5% F.S.)</td>
+                    <td>Analog ADC Pin (A1)</td>
+                    <td><strong>&lt; 500 mg/L (ppm)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>TSD-10 Turbidity Sensor</strong></td>
+                    <td>Scattered Suspended Solids</td>
+                    <td>0 &ndash; 3000 NTU (&plusmn;0.5 NTU)</td>
+                    <td>Analog ADC Pin (A2) / Infrared Phototransistor</td>
+                    <td><strong>&le; 5.0 NTU (Desirable &lt; 1)</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>ESP32 / Arduino Microcontroller</strong></td>
+                    <td>Core Computation &amp; Telemetry</td>
+                    <td>Dual Core 240 MHz, 12-bit ADC</td>
+                    <td>Wi-Fi 802.11 b/g/n / HTTP REST</td>
+                    <td>N/A (Data Transmission Hub)</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Mathematical WQI Formula Section -->
+<div class="card" style="margin-bottom: 3rem; background: linear-gradient(135deg, #f8fafc 0%, #f0f9ff 100%);">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+            Water Quality Index (WQI) Algorithmic Model
+        </h2>
+    </div>
+
+    <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        The system implements the Weighted Arithmetic Water Quality Index method. Sub-indices \(q_i\) are computed for each parameter based on standard deviation from ideal drinking water benchmarks:
+    </p>
+
+    <div style="background: white; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.25rem; font-family: monospace; font-size: 0.95rem; color: var(--primary-900);">
+        WQI = (0.35 &times; q<sub>pH</sub>) + (0.35 &times; q<sub>TDS</sub>) + (0.30 &times; q<sub>Turbidity</sub>)
+    </div>
+
+    <ul style="padding-left: 1.5rem; font-size: 0.88rem; color: var(--text-muted); line-height: 1.8;">
+        <li><strong>Safe (80 &ndash; 100):</strong> Optimal physiological mineralization and optical clarity. Unconditionally fit for drinking.</li>
+        <li><strong>Moderate (50 &ndash; 79):</strong> Borderline mineral or turbidity levels. Requires mechanical sediment filtration or boiling.</li>
+        <li><strong>Unsafe (&lt; 50 or severe breach):</strong> Exceeds permissible health limits. Heavy industrial/bacterial risk. Direct consumption hazardous.</li>
+    </ul>
+</div>
+
+<!-- Dedicated Project Team & Guide Section -->
+<div class="card" style="margin-bottom: 3rem; border-top: 4px solid var(--primary-600);">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Project Team &amp; Guide
+        </h2>
+        <span class="badge" style="background: var(--primary-100); color: var(--primary-800);">Academic Year 2026–2027</span>
+    </div>
+
+    <div style="margin-bottom: 1.5rem; background: var(--primary-50); border: 1px solid var(--primary-200); border-radius: var(--radius-md); padding: 1rem 1.25rem;">
+        <div style="font-weight: 800; font-size: 1.05rem; color: var(--primary-900);">
+            Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, Maharashtra
+        </div>
+        <div style="font-size: 0.92rem; font-weight: 600; color: var(--primary-700); margin-top: 0.2rem;">
+            Department of Computer Science and Design &bull; Capstone B.Tech Project
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+        <!-- Student 1 -->
+        <div style="background: white; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: var(--gradient-ocean); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem;">
+                    KK
+                </div>
+                <div>
+                    <span class="badge" style="background: var(--primary-50); color: var(--primary-800); font-size: 0.72rem; margin-bottom: 0.25rem;">Student Investigator</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Kais Khan Fakirmat Khan</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">B.Tech Student &bull; CSD</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>Role:</strong> Lead Architecture &amp; Analytics<br>
+                Responsible for multi-parameter sensor calibration, algorithmic WQI computation engine, dynamic PDF reporting system, and backend application logic.
+            </p>
+        </div>
+
+        <!-- Student 2 -->
+        <div style="background: white; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem;">
+                    RG
+                </div>
+                <div>
+                    <span class="badge" style="background: var(--primary-50); color: var(--primary-800); font-size: 0.72rem; margin-bottom: 0.25rem;">Student Investigator</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Rajeshwar Sandip Gaurkar</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">B.Tech Student &bull; CSD</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>Role:</strong> UI/UX &amp; Telemetry Integration<br>
+                Responsible for front-end visualization design, responsive interface implementation, interactive Chart.js telemetry dashboards, and database audit logs.
+            </p>
+        </div>
+
+        <!-- Project Guide -->
+        <div style="background: white; border: 1px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem;">
+                    VG
+                </div>
+                <div>
+                    <span class="badge badge-safe" style="font-size: 0.72rem; margin-bottom: 0.25rem;">Project Guide</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Vaishali Gaikwad Mam</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Faculty Project Supervisor</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
+                <strong>Designation:</strong> Project Guide &amp; Faculty Mentor<br>
+                Provided overall project guidance, environmental parameter validation against WHO/BIS specifications, architectural review, and technical oversight.
+            </p>
+        </div>
+    </div>
+
+    <!-- Institutional Summary Table -->
+    <div class="table-responsive">
+        <table class="data-table">
+            <tbody>
+                <tr>
+                    <td style="width: 25%; font-weight: 700; color: var(--text-muted);">Project Title:</td>
+                    <td style="width: 75%; font-weight: 700; color: var(--primary-900);">Smart Water Quality Monitoring &amp; Analysis System</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-muted);">Academic Institution:</td>
+                    <td>Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, Maharashtra</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-muted);">Academic Department:</td>
+                    <td>Department of Computer Science and Design</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-muted);">Project Investigators:</td>
+                    <td>1. Kais Khan Fakirmat Khan &bull; 2. Rajeshwar Sandip Gaurkar</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-muted);">Project Guide:</td>
+                    <td>Prof. Vaishali Gaikwad Mam</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 700; color: var(--text-muted);">Academic Year:</td>
+                    <td>2026–2027</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- College Demonstration & Viva Checklist -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 11 12 14 22 4"></polyline>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+            Project Presentation &amp; Viva Guide
+        </h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+        <div style="background: var(--safe-bg); border: 1px solid var(--safe-border); padding: 1rem; border-radius: var(--radius-md);">
+            <strong style="color: var(--safe-text); display: block; margin-bottom: 0.35rem;">1. Live Sensor Testing</strong>
+            <span style="font-size: 0.85rem; color: var(--safe-text);">Demonstrate real-time input sliders on the "Test Sample" page, showing instantaneous changes to the WQI gauge and status badge.</span>
+        </div>
+        <div style="background: var(--primary-50); border: 1px solid var(--primary-200); padding: 1rem; border-radius: var(--radius-md);">
+            <strong style="color: var(--primary-900); display: block; margin-bottom: 0.35rem;">2. Analytics &amp; Trends</strong>
+            <span style="font-size: 0.85rem; color: var(--primary-900);">Showcase Chart.js trend curves for the pre-seeded samples across campus water points (Hostels, Canteen, Labs).</span>
+        </div>
+        <div style="background: var(--moderate-bg); border: 1px solid var(--moderate-border); padding: 1rem; border-radius: var(--radius-md);">
+            <strong style="color: var(--moderate-text); display: block; margin-bottom: 0.35rem;">3. Certified PDF Export</strong>
+            <span style="font-size: 0.85rem; color: var(--moderate-text);">Click "Download Certified PDF" to show the publication-ready laboratory report with ISO &amp; WHO compliance tables.</span>
+        </div>
+    </div>
+</div>
+{% endblock %}

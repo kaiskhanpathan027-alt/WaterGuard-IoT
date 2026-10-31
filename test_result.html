@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Water Potability Certificate #{{ test.id }}{% endblock %}
+
+{% block content %}
+<!-- Top Header & Actions -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <a href="{{ url_for('history') }}" style="font-size: 0.88rem; color: var(--text-muted);">&larr; Back to History</a>
+            <span style="color: var(--border-light);">&bull;</span>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--primary-700);">Official Certificate #WQ-2026-REP-{{ "%05d"|format(test.id) }}</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">
+            Laboratory Potability Assessment
+        </h1>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{{ url_for('download_pdf', test_id=test.id) }}" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="12" y1="18" x2="12" y2="12"></line>
+                <line x1="9" y1="15" x2="12" y2="18"></line>
+                <line x1="15" y1="15" x2="12" y2="18"></line>
+            </svg>
+            Download Certified PDF Report
+        </a>
+        <button type="button" onclick="window.print()" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Print
+        </button>
+        <a href="{{ url_for('new_test') }}" class="btn btn-secondary">
+            + New Test
+        </a>
+    </div>
+</div>
+
+<!-- Primary Result Verdict Banner (Features 5 & 6) -->
+<div class="result-banner {{ analysis.status_class }}">
+    <div style="flex: 1;">
+        <div style="margin-bottom: 0.5rem;">
+            {% if analysis.overall_status == 'Safe' %}
+                <span class="badge badge-safe" style="font-size: 0.95rem; padding: 0.4rem 1rem;">
+                    <span class="pulse-dot"></span> POTABLE &bull; SAFE FOR DRINKING
+                </span>
+            {% elif analysis.overall_status == 'Moderate' %}
+                <span class="badge badge-moderate" style="font-size: 0.95rem; padding: 0.4rem 1rem;">
+                    <span class="pulse-dot"></span> MODERATE &bull; FILTRATION ADVISED
+                </span>
+            {% else %}
+                <span class="badge badge-unsafe" style="font-size: 0.95rem; padding: 0.4rem 1rem;">
+                    <span class="pulse-dot"></span> NON-POTABLE &bull; UNSAFE / HAZARDOUS
+                </span>
+            {% endif %}
+        </div>
+
+        <h2 style="font-size: 1.6rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.5rem;">
+            {{ analysis.summary_title }}
+        </h2>
+        <p style="font-size: 0.95rem; color: var(--text-main); max-width: 650px;">
+            {{ analysis.summary_desc }}
+        </p>
+
+        <div style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+            Sample: <strong>{{ test.sample_name }}</strong> &bull; Location: <strong>{{ test.location }}</strong> &bull; Category: <strong>{{ test.source_type }}</strong>
+        </div>
+    </div>
+
+    <!-- WQI Score Radial Graphic -->
+    <div style="text-align: center; flex-shrink: 0;">
+        <div class="wqi-circular-display" style="border-color: {% if analysis.overall_status == 'Safe' %}var(--safe-primary){% elif analysis.overall_status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %}; width: 140px; height: 140px;">
+            <span class="wqi-number" style="color: {% if analysis.overall_status == 'Safe' %}var(--safe-primary){% elif analysis.overall_status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %}; font-size: 2.4rem;">
+                {{ analysis.wqi_score }}
+            </span>
+            <span class="wqi-label">WQI SCORE</span>
+        </div>
+        <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-top: 0.4rem;">
+            Scale: 0 (Deadly) to 100 (Pristine)
+        </div>
+    </div>
+</div>
+
+<!-- Parameter Analytical Breakdown (3 Columns) -->
+<h3 style="font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-bottom: 1rem;">
+    Analytical Parameter Breakdown
+</h3>
+
+<div class="param-detail-grid">
+    <!-- pH Parameter Card -->
+    {% set p_ph = analysis.parameters.ph %}
+    <div class="param-card" style="border-top: 4px solid #0284c7;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-muted);">{{ p_ph.name }}</span>
+            <span class="badge badge-{{ p_ph.class }}" style="font-size: 0.72rem;">{{ p_ph.status }}</span>
+        </div>
+        <div class="param-val-large" style="color: #0284c7;">
+            {{ p_ph.value }} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">pH</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            <strong>Standard:</strong> {{ p_ph.standard }} &bull; <strong>Label:</strong> {{ p_ph.label }}
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-main); border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+            {{ p_ph.detail }}
+        </p>
+    </div>
+
+    <!-- TDS Parameter Card -->
+    {% set p_tds = analysis.parameters.tds %}
+    <div class="param-card" style="border-top: 4px solid #8b5cf6;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-muted);">{{ p_tds.name }}</span>
+            <span class="badge badge-{{ p_tds.class }}" style="font-size: 0.72rem;">{{ p_tds.status }}</span>
+        </div>
+        <div class="param-val-large" style="color: #8b5cf6;">
+            {{ p_tds.value }} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">mg/L</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            <strong>Standard:</strong> {{ p_tds.standard }} &bull; <strong>Label:</strong> {{ p_tds.label }}
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-main); border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+            {{ p_tds.detail }}
+        </p>
+    </div>
+
+    <!-- Turbidity Parameter Card -->
+    {% set p_turb = analysis.parameters.turbidity %}
+    <div class="param-card" style="border-top: 4px solid #f59e0b;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 700; font-size: 0.95rem; color: var(--text-muted);">{{ p_turb.name }}</span>
+            <span class="badge badge-{{ p_turb.class }}" style="font-size: 0.72rem;">{{ p_turb.status }}</span>
+        </div>
+        <div class="param-val-large" style="color: #f59e0b;">
+            {{ p_turb.value }} <span style="font-size: 0.95rem; font-weight: 500; color: var(--text-muted);">NTU</span>
+        </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            <strong>Standard:</strong> {{ p_turb.standard }} &bull; <strong>Label:</strong> {{ p_turb.label }}
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-main); border-top: 1px solid var(--border-light); padding-top: 0.75rem;">
+            {{ p_turb.detail }}
+        </p>
+    </div>
+</div>
+
+<!-- Treatment & Remediation Recommendations -->
+<div class="recommendations-box">
+    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--safe-primary);">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #065f46;">
+            Prescribed Treatment &amp; Remediation Protocol
+        </h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        {% for rec in analysis.recommendations %}
+            <div class="rec-item">
+                <div class="rec-icon">&#10003;</div>
+                <div>
+                    <strong style="color: #065f46;">{{ rec.title }}:</strong>
+                    <span style="color: #1f2937; font-size: 0.9rem;">{{ rec.body }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Laboratory Metadata & Sample Audit Trail -->
+<div class="card" style="margin-top: 2rem;">
+    <div class="card-header">
+        <h3 class="card-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            Testing Audit Trail &amp; Specifications
+        </h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Verified Session</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <tbody>
+                <tr>
+                    <td style="width: 25%; font-weight: 600; color: var(--text-muted);">Sample Designation:</td>
+                    <td style="width: 25%; font-weight: 700;">{{ test.sample_name }}</td>
+                    <td style="width: 25%; font-weight: 600; color: var(--text-muted);">Unique Test ID:</td>
+                    <td style="width: 25%;">#{{ test.id }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Sampling Location:</td>
+                    <td>{{ test.location }}</td>
+                    <td style="font-weight: 600; color: var(--text-muted);">Water Source Type:</td>
+                    <td>{{ test.source_type }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Testing Analyst:</td>
+                    <td>{{ test.user_full_name or test.tested_by or test.username }}</td>
+                    <td style="font-weight: 600; color: var(--text-muted);">Custom Username:</td>
+                    <td><strong style="color: var(--primary-700); font-family: monospace;">{{ test.custom_username or test.username }}</strong></td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Timestamp:</td>
+                    <td>{{ test.created_at }}</td>
+                    <td style="font-weight: 600; color: var(--text-muted);">Certificate ID:</td>
+                    <td>WQ-2026-REP-{{ "%05d"|format(test.id) }}</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Academic Institution:</td>
+                    <td>Maharashtra Institute of Technology, Chhatrapati Sambhajinagar</td>
+                    <td style="font-weight: 600; color: var(--text-muted);">Department:</td>
+                    <td>Computer Science and Design</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Project Team:</td>
+                    <td>Kais Khan Fakirmat Khan &bull; Rajeshwar Sandip Gaurkar</td>
+                    <td style="font-weight: 600; color: var(--text-muted);">Project Guide:</td>
+                    <td>Vaishali Gaikwad Mam</td>
+                </tr>
+                <tr>
+                    <td style="font-weight: 600; color: var(--text-muted);">Observations / Notes:</td>
+                    <td colspan="3">{{ test.notes or 'No visual impurities or abnormalities reported.' }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bottom Actions Bar with Download PDF Report button -->
+    <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+            Laboratory Assessment permanently saved in persistent SQLite storage.
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">
+                &larr; Return to My History
+            </a>
+            <a href="{{ url_for('download_pdf', test_id=test.id) }}" class="btn btn-primary btn-lg" title="Download Official PDF Report">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="12" y2="18"></line>
+                    <line x1="15" y1="15" x2="12" y2="18"></line>
+                </svg>
+                Download PDF Report
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

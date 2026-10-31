@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}My History &bull; Water Quality Test Archive{% endblock %}
+
+{% block content %}
+<!-- Top Header (Requirement 4: My History) -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+            <span class="badge" style="background: var(--primary-100); color: var(--primary-800); font-size: 0.75rem;">
+                Personal Archive
+            </span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">&bull; WaterGuard ID: <strong style="color: var(--primary-700);">{{ current_user.custom_username or current_user.username }}</strong></span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">
+            My History &ndash; Water Quality Test Records
+        </h1>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Review past physical-chemical sensory logs, inspect potability metrics, and download certified PDF laboratory reports.
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{{ url_for('new_test') }}" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            + New Water Test
+        </a>
+        <a href="{{ url_for('export_csv') }}" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export All as CSV
+        </a>
+    </div>
+</div>
+
+<!-- Total Tests Performed Summary Banner (Requirement 4) -->
+<div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); padding: 1rem 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div class="stat-icon primary" style="width: 42px; height: 42px; font-size: 1.1rem;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--primary-700); letter-spacing: 0.5px;">
+                    Total Tests Performed by You
+                </div>
+                <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-main);">
+                    {{ all_count }} Total Tests Recorded
+                    {% if total_count != all_count %}
+                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--primary-600);">(Filtered: {{ total_count }} matches)</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div style="font-size: 0.82rem; color: var(--text-muted);">
+            All data is permanently persisted and linked to your WaterGuard ID: <code>{{ current_user.custom_username or current_user.username }}</code>
+        </div>
+    </div>
+</div>
+
+<!-- Search and Filter Bar with Date Picker (Requirement 4) -->
+<div class="card" style="margin-bottom: 1.5rem; padding: 1.25rem;">
+    <form method="GET" action="{{ url_for('history') }}" style="display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap;">
+        <!-- Search Keyword -->
+        <div style="flex: 2; min-width: 220px;">
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Search Sample or Location</label>
+            <input type="text" name="search" class="form-control" placeholder="Search sample name, location, source..." value="{{ search }}">
+        </div>
+
+        <!-- Date Filter (Requirement 4) -->
+        <div style="flex: 1; min-width: 160px;">
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Filter by Test Date</label>
+            <input type="date" name="date" class="form-control" value="{{ date_filter }}" title="Select specific date">
+        </div>
+
+        <!-- Status Filter -->
+        <div style="flex: 1; min-width: 150px;">
+            <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Quality Status</label>
+            <select name="status" class="form-control">
+                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Quality Statuses</option>
+                <option value="safe" {% if status_filter == 'safe' %}selected{% endif %}>Safe Only</option>
+                <option value="moderate" {% if status_filter == 'moderate' %}selected{% endif %}>Moderate Only</option>
+                <option value="unsafe" {% if status_filter == 'unsafe' %}selected{% endif %}>Unsafe Only</option>
+            </select>
+        </div>
+
+        <div style="margin-top: auto;">
+            <button type="submit" class="btn btn-primary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                Apply Filters
+            </button>
+            {% if search or status_filter != 'all' or date_filter %}
+                <a href="{{ url_for('history') }}" class="btn btn-secondary">Reset</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- History Table with Prominent PDF Download Buttons (Requirement 1 & 4) -->
+<div class="card">
+    {% if tests %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sample Information</th>
+                        <th>Source Category</th>
+                        <th>pH</th>
+                        <th>TDS</th>
+                        <th>Turbidity</th>
+                        <th>WQI Score</th>
+                        <th>Quality Status</th>
+                        <th>Date &amp; Time</th>
+                        <th style="text-align: right; min-width: 220px;">Download &amp; Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tests %}
+                        <tr>
+                            <td><strong>#{{ t.id }}</strong></td>
+                            <td>
+                                <a href="{{ url_for('test_result', test_id=t.id) }}" style="font-weight: 700;">
+                                    {{ t.sample_name }}
+                                </a>
+                                <div style="font-size: 0.78rem; color: var(--text-muted);">
+                                    {{ t.location }}
+                                </div>
+                            </td>
+                            <td>
+                                <span style="font-size: 0.82rem; background: var(--primary-50); padding: 0.2rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--primary-200); color: var(--primary-900);">
+                                    {{ t.source_type }}
+                                </span>
+                            </td>
+                            <td><strong>{{ t.ph }}</strong></td>
+                            <td>{{ t.tds }} ppm</td>
+                            <td>{{ t.turbidity }} NTU</td>
+                            <td>
+                                <span style="font-weight: 800; font-size: 0.95rem; color: {% if t.status == 'Safe' %}var(--safe-primary){% elif t.status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %};">
+                                    {{ t.wqi_score }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if t.status == 'Safe' %}
+                                    <span class="badge badge-safe"><span class="pulse-dot"></span> Safe</span>
+                                {% elif t.status == 'Moderate' %}
+                                    <span class="badge badge-moderate"><span class="pulse-dot"></span> Moderate</span>
+                                {% else %}
+                                    <span class="badge badge-unsafe"><span class="pulse-dot"></span> Unsafe</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
+                                {{ t.created_at[:16] }}
+                            </td>
+                            <td style="text-align: right; white-space: nowrap;">
+                                <div style="display: inline-flex; gap: 0.4rem; align-items: center;">
+                                    <!-- View Details Button -->
+                                    <a href="{{ url_for('test_result', test_id=t.id) }}" class="btn btn-secondary btn-sm" title="View Full Analysis Details">
+                                        View Details
+                                    </a>
+
+                                    <!-- Clearly Visible Download PDF Report Button (Requirement 1 & 4) -->
+                                    <a href="{{ url_for('download_pdf', test_id=t.id) }}" class="btn btn-primary btn-sm" title="Download Official PDF Laboratory Report">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                                            <line x1="9" y1="15" x2="12" y2="18"></line>
+                                            <line x1="15" y1="15" x2="12" y2="18"></line>
+                                        </svg>
+                                        Download PDF Report
+                                    </a>
+
+                                    <!-- Delete Button -->
+                                    <form method="POST" action="{{ url_for('delete_test', test_id=t.id) }}" style="display: inline;" onsubmit="return confirmDelete('Are you sure you want to permanently delete sample #{{ t.id }}?');">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete record">
+                                            &times;
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 1rem; color: var(--primary-300);">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <h3 style="font-size: 1.15rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;">
+                No test records match your filter criteria
+            </h3>
+            <p style="font-size: 0.88rem; margin-bottom: 1.25rem;">
+                Try adjusting your search keyword, date, or quality status filter.
+            </p>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary btn-sm">Clear All Filters</a>
+            <a href="{{ url_for('new_test') }}" class="btn btn-primary btn-sm">+ Submit New Test</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

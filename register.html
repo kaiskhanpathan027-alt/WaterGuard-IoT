@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Student / Analyst Registration{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="max-width: 540px;">
+    <div class="auth-header">
+        <div class="brand-icon" style="margin: 0 auto 1rem auto; width: 50px; height: 50px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="8.5" cy="7" r="4"></circle>
+                <line x1="20" y1="8" x2="20" y2="14"></line>
+                <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+        </div>
+        <h2>Create an Account</h2>
+        <p>Register as a student analyst to start monitoring, testing, and storing water quality telemetry.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+        <!-- Name Fields -->
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+                <label class="form-label" for="first_name">First Name *</label>
+                <input type="text" id="first_name" name="first_name" class="form-control" placeholder="e.g. Kais" required autofocus oninput="updateCustomUsername()">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="last_name">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" class="form-control" placeholder="e.g. Khan" required oninput="updateCustomUsername()">
+            </div>
+        </div>
+
+        <!-- Automatic Custom Username Live Preview Card (Requirement 2) -->
+        <div style="background: var(--primary-50); border: 1.5px dashed var(--primary-300); border-radius: var(--radius-md); padding: 0.85rem 1rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary-800); text-transform: uppercase; letter-spacing: 0.5px;">
+                    Generated WaterGuard ID (Your Login Username)
+                </span>
+                <span class="badge" style="background: var(--primary-200); color: var(--primary-900); font-size: 0.68rem;">Auto-Generated</span>
+            </div>
+            <div style="font-size: 1.05rem; font-weight: 800; font-family: monospace; color: var(--primary-900);" id="username_preview">
+                firstname.lastname@water.guard
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">
+                &bull; Formatted as <code>firstname.lastname@water.guard</code>. Use this to log in to your dashboard anytime.
+            </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+                <label class="form-label" for="email">Institutional / Contact Email *</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="e.g. user@mit.edu" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="college_id">College / Roll ID (Optional)</label>
+                <input type="text" id="college_id" name="college_id" class="form-control" placeholder="e.g. MIT-CSD-2026-25">
+            </div>
+        </div>
+
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="form-group">
+                <label class="form-label" for="password">Password *</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Min. 6 characters" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirm_password">Confirm Password *</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" placeholder="Repeat password" required>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">
+            Register &amp; Create WaterGuard ID &rarr;
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted);">
+        Already have an account? <a href="{{ url_for('login') }}" style="font-weight: 600;">Sign in with your WaterGuard ID</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateCustomUsername() {
+    const fn = (document.getElementById('first_name').value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const ln = (document.getElementById('last_name').value || '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
+    const preview = document.getElementById('username_preview');
+    
+    if (fn && ln) {
+        preview.textContent = `${fn}.${ln}@water.guard`;
+        preview.style.color = 'var(--primary-800)';
+    } else if (fn) {
+        preview.textContent = `${fn}.analyst@water.guard`;
+        preview.style.color = 'var(--primary-700)';
+    } else if (ln) {
+        preview.textContent = `user.${ln}@water.guard`;
+        preview.style.color = 'var(--primary-700)';
+    } else {
+        preview.textContent = 'firstname.lastname@water.guard';
+        preview.style.color = 'var(--text-muted)';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Smart User Dashboard{% endblock %}
+
+{% block content %}
+<!-- Personalized User Welcome Header (Requirement 5) -->
+<div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); border-left: 5px solid var(--primary-600);">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.25rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                <span class="badge" style="background: var(--primary-100); color: var(--primary-800); font-size: 0.75rem;">
+                    Active Analyst Session
+                </span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">&bull; User ID: #{{ current_user.id }}</span>
+            </div>
+            <h1 style="font-size: 1.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">
+                Welcome back, {{ current_user.full_name or current_user.username }}!
+            </h1>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; font-size: 0.88rem; color: var(--text-muted);">
+                <span>WaterGuard ID: <strong style="color: var(--primary-700); font-family: monospace;">{{ current_user.custom_username or current_user.username }}</strong></span>
+                <span>&bull;</span>
+                <span>Email: <strong>{{ current_user.email }}</strong></span>
+                {% if current_user.college_id %}
+                    <span>&bull;</span>
+                    <span>Roll/ID: <strong>{{ current_user.college_id }}</strong></span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <a href="{{ url_for('new_test') }}" class="btn btn-primary btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                + New Water Test
+            </a>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary btn-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                My Test History
+            </a>
+            <a href="{{ url_for('export_csv') }}" class="btn btn-secondary" title="Export raw test data as CSV">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export CSV
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Highlight: Latest Water Quality Result Card (Requirement 5) -->
+{% if latest_test %}
+<div class="card" style="margin-bottom: 2rem; border-color: {% if latest_test.status == 'Safe' %}var(--safe-border){% elif latest_test.status == 'Moderate' %}var(--moderate-border){% else %}var(--unsafe-border){% endif %}; background: {% if latest_test.status == 'Safe' %}var(--safe-bg){% elif latest_test.status == 'Moderate' %}var(--moderate-bg){% else %}var(--unsafe-bg){% endif %};">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-main);">
+                    Most Recent Water Quality Test
+                </span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">&bull; Sample #{{ latest_test.id }} &bull; {{ latest_test.created_at[:16] }}</span>
+            </div>
+            <h2 style="font-size: 1.45rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.35rem;">
+                {{ latest_test.sample_name }}
+            </h2>
+            <div style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+                Location: <strong>{{ latest_test.location }}</strong> &bull; Source: <strong>{{ latest_test.source_type }}</strong>
+            </div>
+
+            <!-- Parameters Quick Bar -->
+            <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.92rem;">
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">pH LEVEL</span>
+                    <strong style="font-size: 1.15rem; color: #0284c7;">{{ latest_test.ph }}</strong>
+                </div>
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">TDS (SOLIDS)</span>
+                    <strong style="font-size: 1.15rem; color: #8b5cf6;">{{ latest_test.tds }} <span style="font-size: 0.8rem;">ppm</span></strong>
+                </div>
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">TURBIDITY</span>
+                    <strong style="font-size: 1.15rem; color: #f59e0b;">{{ latest_test.turbidity }} <span style="font-size: 0.8rem;">NTU</span></strong>
+                </div>
+                <div>
+                    <span style="color: var(--text-muted); font-size: 0.8rem; display: block;">WQI SCORE</span>
+                    <strong style="font-size: 1.15rem; color: {% if latest_test.status == 'Safe' %}var(--safe-primary){% elif latest_test.status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %};">
+                        {{ latest_test.wqi_score }} / 100
+                    </strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Badge & Action Buttons -->
+        <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.85rem;">
+            {% if latest_test.status == 'Safe' %}
+                <span class="badge badge-safe" style="font-size: 1rem; padding: 0.5rem 1.25rem;">
+                    <span class="pulse-dot"></span> SAFE / POTABLE
+                </span>
+            {% elif latest_test.status == 'Moderate' %}
+                <span class="badge badge-moderate" style="font-size: 1rem; padding: 0.5rem 1.25rem;">
+                    <span class="pulse-dot"></span> MODERATE QUALITY
+                </span>
+            {% else %}
+                <span class="badge badge-unsafe" style="font-size: 1rem; padding: 0.5rem 1.25rem;">
+                    <span class="pulse-dot"></span> UNSAFE / HAZARDOUS
+                </span>
+            {% endif %}
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <a href="{{ url_for('test_result', test_id=latest_test.id) }}" class="btn btn-secondary btn-sm">
+                    View Full Analysis &rarr;
+                </a>
+                <a href="{{ url_for('download_pdf', test_id=latest_test.id) }}" class="btn btn-primary btn-sm" title="Download Official PDF Certificate">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="12" y1="18" x2="12" y2="12"></line>
+                        <line x1="9" y1="15" x2="12" y2="18"></line>
+                        <line x1="15" y1="15" x2="12" y2="18"></line>
+                    </svg>
+                    Download PDF Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Primary Stats Counters Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon primary">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ stats.total_tests }}</div>
+            <div class="stat-label">Total Previous Tests</div>
+        </div>
+    </div>
+
+    <div class="stat-card safe-card">
+        <div class="stat-icon safe">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" style="color: var(--safe-primary);">{{ stats.safe_count }}</div>
+            <div class="stat-label">Safe &amp; Potable ({{ stats.safe_percentage }}%)</div>
+        </div>
+    </div>
+
+    <div class="stat-card mod-card">
+        <div class="stat-icon moderate">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" style="color: var(--moderate-primary);">{{ stats.moderate_count }}</div>
+            <div class="stat-label">Moderate Quality</div>
+        </div>
+    </div>
+
+    <div class="stat-card unsafe-card">
+        <div class="stat-icon unsafe">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" style="color: var(--unsafe-primary);">{{ stats.unsafe_count }}</div>
+            <div class="stat-label">Unsafe / Hazardous</div>
+        </div>
+    </div>
+</div>
+
+<!-- Parameter Averages Overview Bar -->
+<div class="card" style="margin-bottom: 2rem; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--primary-900);">
+            Aggregated Baseline Telemetry (All Tested Samples)
+        </h3>
+        <span style="font-size: 0.78rem; color: var(--primary-700); font-weight: 600;">Mean Parameter Values</span>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; text-align: center;">
+        <div style="background: white; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">MEAN pH</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #0284c7;">{{ stats.avg_ph }}</div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Standard: 6.5 &ndash; 8.5</div>
+        </div>
+        <div style="background: white; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">MEAN TDS</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #8b5cf6;">{{ stats.avg_tds }} <span style="font-size:0.8rem;">mg/L</span></div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Limit: &lt; 500 mg/L</div>
+        </div>
+        <div style="background: white; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">MEAN TURBIDITY</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #f59e0b;">{{ stats.avg_turbidity }} <span style="font-size:0.8rem;">NTU</span></div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Limit: &le; 5.0 NTU</div>
+        </div>
+        <div style="background: white; padding: 0.85rem; border-radius: var(--radius-md); border: 1px solid var(--border-light);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">SYSTEM MEAN WQI</div>
+            <div style="font-size: 1.4rem; font-weight: 800; color: #10b981;">{{ stats.avg_wqi }} <span style="font-size:0.8rem;">/100</span></div>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">Quality Rating</div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Chart Visualizations -->
+<div class="charts-grid">
+    <!-- Trend Line Chart -->
+    <div class="chart-box">
+        <div class="chart-header">
+            <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+                    Multi-Parameter Trend Telemetry
+                </h3>
+                <p style="font-size: 0.78rem; color: var(--text-muted);">Historical progression of WQI Score, pH, Turbidity, and TDS</p>
+            </div>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleChartDataset(0)" style="font-size: 0.72rem;">WQI</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleChartDataset(1)" style="font-size: 0.72rem;">pH</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleChartDataset(2)" style="font-size: 0.72rem;">Turbidity</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="toggleChartDataset(3)" style="font-size: 0.72rem;">TDS</button>
+            </div>
+        </div>
+        <div class="chart-canvas-container">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Status Distribution Doughnut Chart -->
+    <div class="chart-box">
+        <div class="chart-header">
+            <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">
+                    Potability Distribution
+                </h3>
+                <p style="font-size: 0.78rem; color: var(--text-muted);">Safe vs. Moderate vs. Unsafe ratio</p>
+            </div>
+        </div>
+        <div class="chart-canvas-container">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Water Samples Table with Visible PDF Buttons -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            Recent Water Quality Tests
+        </h2>
+        <a href="{{ url_for('history') }}" class="btn btn-secondary btn-sm">View Full History &rarr;</a>
+    </div>
+
+    {% if recent_tests %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sample Name</th>
+                        <th>Location &amp; Source</th>
+                        <th>pH</th>
+                        <th>TDS</th>
+                        <th>Turbidity</th>
+                        <th>WQI Score</th>
+                        <th>Status</th>
+                        <th>Tested Date</th>
+                        <th style="text-align: right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in recent_tests %}
+                        <tr>
+                            <td><strong>#{{ t.id }}</strong></td>
+                            <td>
+                                <a href="{{ url_for('test_result', test_id=t.id) }}" style="font-weight: 600;">
+                                    {{ t.sample_name }}
+                                </a>
+                            </td>
+                            <td>
+                                <div>{{ t.location }}</div>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">{{ t.source_type }}</span>
+                            </td>
+                            <td><strong>{{ t.ph }}</strong></td>
+                            <td>{{ t.tds }} ppm</td>
+                            <td>{{ t.turbidity }} NTU</td>
+                            <td>
+                                <strong style="color: {% if t.status == 'Safe' %}var(--safe-primary){% elif t.status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %};">
+                                    {{ t.wqi_score }}
+                                </strong>
+                            </td>
+                            <td>
+                                {% if t.status == 'Safe' %}
+                                    <span class="badge badge-safe"><span class="pulse-dot"></span> Safe</span>
+                                {% elif t.status == 'Moderate' %}
+                                    <span class="badge badge-moderate"><span class="pulse-dot"></span> Moderate</span>
+                                {% else %}
+                                    <span class="badge badge-unsafe"><span class="pulse-dot"></span> Unsafe</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 0.8rem; color: var(--text-muted);">
+                                {{ t.created_at[:16] }}
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="display: inline-flex; gap: 0.4rem;">
+                                    <a href="{{ url_for('test_result', test_id=t.id) }}" class="btn btn-secondary btn-sm" title="View Full Report">
+                                        View
+                                    </a>
+                                    <a href="{{ url_for('download_pdf', test_id=t.id) }}" class="btn btn-primary btn-sm" title="Download Official PDF Report">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                            <polyline points="14 2 14 8 20 8"></polyline>
+                                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                                            <line x1="9" y1="15" x2="12" y2="18"></line>
+                                            <line x1="15" y1="15" x2="12" y2="18"></line>
+                                        </svg>
+                                        PDF
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.75rem; color: var(--primary-400);">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+            <p style="font-size: 1rem; font-weight: 600;">No water tests recorded yet.</p>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem;">Begin by logging your first sensory measurement.</p>
+            <a href="{{ url_for('new_test') }}" class="btn btn-primary btn-sm">Submit First Sample</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

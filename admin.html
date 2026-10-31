@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Console{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+            <span class="admin-badge">Superuser Access</span>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">&bull; System Control Panel</span>
+        </div>
+        <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">
+            Administrator &amp; Laboratory Oversight
+        </h1>
+    </div>
+
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{{ url_for('export_csv', scope='all') }}" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export Master Dataset (CSV)
+        </a>
+        <a href="{{ url_for('new_test') }}" class="btn btn-primary">
+            + Log Admin Sample
+        </a>
+    </div>
+</div>
+
+<!-- Admin Metrics Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon primary">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ admin_data.total_users }}</div>
+            <div class="stat-label">Registered Student Analysts</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon primary">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">{{ sys_stats.total_tests }}</div>
+            <div class="stat-label">System-Wide Samples</div>
+        </div>
+    </div>
+
+    <div class="stat-card safe-card">
+        <div class="stat-icon safe">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" style="color: var(--safe-primary);">{{ sys_stats.safe_percentage }}%</div>
+            <div class="stat-label">Overall Safety Compliance</div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon primary">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+            </svg>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value" style="font-size: 1.25rem; color: var(--primary-700);">SQLite 3</div>
+            <div class="stat-label">Database Engine Active</div>
+        </div>
+    </div>
+</div>
+
+<!-- Section 1: User Account Management -->
+<div class="card" style="margin-bottom: 2.5rem;">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Registered Users &amp; Student Accounts
+        </h2>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">{{ admin_data.users|length }} Total Accounts</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Institutional Email</th>
+                    <th>College Roll ID</th>
+                    <th>Role</th>
+                    <th>Tests Logged</th>
+                    <th>Joined</th>
+                    <th style="text-align: right;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in admin_data.users %}
+                    <tr>
+                        <td><strong>#{{ u.id }}</strong></td>
+                        <td><strong>{{ u.full_name or u.username }}</strong></td>
+                        <td><code>{{ u.username }}</code></td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.college_id or 'N/A' }}</td>
+                        <td>
+                            {% if u.role == 'admin' %}
+                                <span class="admin-badge">Admin</span>
+                            {% else %}
+                                <span class="badge" style="background: var(--primary-50); color: var(--primary-800); border: 1px solid var(--primary-200);">User</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ u.test_count }}</strong></td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">{{ u.created_at[:10] }}</td>
+                        <td style="text-align: right;">
+                            {% if u.role != 'admin' %}
+                                <form method="POST" action="{{ url_for('admin_delete_user', user_id=u.id) }}" style="display:inline;" onsubmit="return confirmDelete('Are you sure you want to permanently delete user {{ u.username }} and all their test data?');">
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Remove User">Delete</button>
+                                </form>
+                            {% else %}
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">Root</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section 2: System-Wide Test Logs -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            System-Wide Water Quality Telemetry
+        </h2>
+    </div>
+
+    <!-- Filter form -->
+    <div style="margin-bottom: 1.25rem;">
+        <form method="GET" action="{{ url_for('admin_dashboard') }}" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <input type="text" name="search" class="form-control" placeholder="Search by student, sample name, or location..." value="{{ search }}" style="flex: 2; min-width: 220px;">
+            <select name="status" class="form-control" style="flex: 1; min-width: 140px;">
+                <option value="all" {% if status_filter == 'all' %}selected{% endif %}>All Statuses</option>
+                <option value="safe" {% if status_filter == 'safe' %}selected{% endif %}>Safe</option>
+                <option value="moderate" {% if status_filter == 'moderate' %}selected{% endif %}>Moderate</option>
+                <option value="unsafe" {% if status_filter == 'unsafe' %}selected{% endif %}>Unsafe</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            {% if search or status_filter != 'all' %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary">Reset</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Sample Name</th>
+                    <th>Location &amp; Source</th>
+                    <th>Analyst</th>
+                    <th>pH</th>
+                    <th>TDS</th>
+                    <th>Turbidity</th>
+                    <th>WQI</th>
+                    <th>Status</th>
+                    <th>Tested On</th>
+                    <th style="text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in all_tests %}
+                    <tr>
+                        <td><strong>#{{ t.id }}</strong></td>
+                        <td>
+                            <a href="{{ url_for('test_result', test_id=t.id) }}" style="font-weight: 700;">{{ t.sample_name }}</a>
+                        </td>
+                        <td>
+                            <div>{{ t.location }}</div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted);">{{ t.source_type }}</span>
+                        </td>
+                        <td>{{ t.tested_by or t.username }}</td>
+                        <td><strong>{{ t.ph }}</strong></td>
+                        <td>{{ t.tds }} ppm</td>
+                        <td>{{ t.turbidity }} NTU</td>
+                        <td>
+                            <strong style="color: {% if t.status == 'Safe' %}var(--safe-primary){% elif t.status == 'Moderate' %}var(--moderate-primary){% else %}var(--unsafe-primary){% endif %};">
+                                {{ t.wqi_score }}
+                            </strong>
+                        </td>
+                        <td>
+                            {% if t.status == 'Safe' %}
+                                <span class="badge badge-safe"><span class="pulse-dot"></span> Safe</span>
+                            {% elif t.status == 'Moderate' %}
+                                <span class="badge badge-moderate"><span class="pulse-dot"></span> Moderate</span>
+                            {% else %}
+                                <span class="badge badge-unsafe"><span class="pulse-dot"></span> Unsafe</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);">{{ t.created_at[:16] }}</td>
+                        <td style="text-align: right;">
+                            <div style="display: inline-flex; gap: 0.35rem;">
+                                <a href="{{ url_for('test_result', test_id=t.id) }}" class="btn btn-secondary btn-sm">View</a>
+                                <a href="{{ url_for('download_pdf', test_id=t.id) }}" class="btn btn-primary btn-sm">PDF</a>
+                                <form method="POST" action="{{ url_for('delete_test', test_id=t.id) }}" style="display:inline;" onsubmit="return confirmDelete();">
+                                    <button type="submit" class="btn btn-danger btn-sm">&times;</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

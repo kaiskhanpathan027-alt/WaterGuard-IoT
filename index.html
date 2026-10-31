@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Water Quality Monitoring System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="ripple-circle ripple-1"></div>
+    <div class="ripple-circle ripple-2"></div>
+    <div class="ripple-circle ripple-3"></div>
+
+    <div class="hero-grid">
+        <div>
+            <div class="hero-tag">
+                <span class="pulse-dot" style="background-color: var(--primary-600);"></span>
+                Academic Year 2026–2027 &bull; Capstone Project
+            </div>
+            <h1 class="hero-title">
+                Smart Water Quality <br>
+                <span class="hero-highlight">Monitoring & Analysis</span> System
+            </h1>
+            <div style="background: rgba(255, 255, 255, 0.9); border: 1px solid var(--primary-200); border-radius: var(--radius-md); padding: 0.75rem 1rem; margin-bottom: 1.25rem;">
+                <div style="font-weight: 800; color: var(--primary-900); font-size: 1.02rem;">
+                    Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, Maharashtra
+                </div>
+                <div style="font-size: 0.88rem; color: var(--primary-700); font-weight: 600; margin-top: 0.15rem;">
+                    Department of Computer Science and Design
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.35rem; display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                    <span>Developed By: <strong style="color: var(--primary-900);">Kais Khan Fakirmat Khan</strong> &amp; <strong style="color: var(--primary-900);">Rajeshwar Sandip Gaurkar</strong></span>
+                    <span>&bull;</span>
+                    <span>Project Guide: <strong style="color: var(--primary-900);">Vaishali Gaikwad Mam</strong></span>
+                </div>
+            </div>
+            <p class="hero-description">
+                An advanced multi-sensor analytical platform combining physical chemical parameters (<strong>pH, TDS, Turbidity</strong>) with scientific Water Quality Index (WQI) algorithms to automate potability classification and generate laboratory-grade reports.
+            </p>
+
+            <div class="hero-actions">
+                {% if current_user %}
+                    <a href="{{ url_for('new_test') }}" class="btn btn-primary btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Test Water Sample
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">Open Dashboard</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Get Started / Sign In</a>
+                    <a href="#quick-calculator" class="btn btn-secondary btn-lg">Try Live Simulator</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-card-preview">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="stat-icon safe" style="width:36px; height:36px; font-size:1.1rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-main);">Campus RO Water</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Sample #WQ-012 &bull; Verified</div>
+                        </div>
+                    </div>
+                    <span class="badge badge-safe"><span class="pulse-dot"></span> SAFE</span>
+                </div>
+
+                <div class="gauge-meter-wrapper" style="margin: 1rem 0;">
+                    <div class="wqi-circular-display" style="border-color: var(--safe-primary); width: 110px; height: 110px;">
+                        <span class="wqi-number" style="color: var(--safe-primary); font-size: 1.8rem;">94.2</span>
+                        <span class="wqi-label">WQI SCORE</span>
+                    </div>
+                </div>
+
+                <div class="param-mini-cards">
+                    <div class="param-mini-row">
+                        <span style="font-weight: 600; font-size: 0.85rem;">pH Level</span>
+                        <span style="font-weight: 700; color: var(--primary-700);">7.35 pH</span>
+                    </div>
+                    <div class="param-mini-row">
+                        <span style="font-weight: 600; font-size: 0.85rem;">TDS (Dissolved Solids)</span>
+                        <span style="font-weight: 700; color: var(--primary-700);">160 ppm</span>
+                    </div>
+                    <div class="param-mini-row">
+                        <span style="font-weight: 600; font-size: 0.85rem;">Turbidity</span>
+                        <span style="font-weight: 700; color: var(--primary-700);">0.6 NTU</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 1rem; text-align: center; font-size: 0.75rem; color: var(--text-muted);">
+                    Status: 100% compliant with WHO Drinking Standards
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Dedicated Academic Project Team & Developed By Section -->
+<section style="margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 720px; margin: 0 auto 2rem auto;">
+        <span class="badge" style="background: var(--primary-100); color: var(--primary-800); margin-bottom: 0.5rem;">Capstone Engineering Project &bull; Academic Year 2026–2027</span>
+        <h2 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">Developed By</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            Department of Computer Science and Design &bull; Maharashtra Institute of Technology, Chhatrapati Sambhajinagar, Maharashtra
+        </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.5rem;">
+        <!-- Student 1 -->
+        <div class="card" style="border-top: 4px solid var(--primary-600); position: relative;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-ocean); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);">
+                    KK
+                </div>
+                <div>
+                    <span class="badge" style="background: var(--primary-50); color: var(--primary-800); font-size: 0.72rem; margin-bottom: 0.2rem;">Student Developer</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Kais Khan Fakirmat Khan</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Dept. of Computer Science and Design</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                Engineered the telemetry integration, automated WQI algorithmic evaluation matrix, and dynamic PDF laboratory report generation engine.
+            </p>
+            <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--primary-700); font-weight: 600;">
+                Maharashtra Institute of Technology, Chhatrapati Sambhajinagar
+            </div>
+        </div>
+
+        <!-- Student 2 -->
+        <div class="card" style="border-top: 4px solid var(--cyan-500); position: relative;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);">
+                    RG
+                </div>
+                <div>
+                    <span class="badge" style="background: var(--primary-50); color: var(--primary-800); font-size: 0.72rem; margin-bottom: 0.2rem;">Student Developer</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Rajeshwar Sandip Gaurkar</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Dept. of Computer Science and Design</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                Developed interactive multi-axis Chart.js telemetry, SQLite analytical data models, responsive UI workflows, and system audit logs.
+            </p>
+            <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--primary-700); font-weight: 600;">
+                Maharashtra Institute of Technology, Chhatrapati Sambhajinagar
+            </div>
+        </div>
+
+        <!-- Project Guide -->
+        <div class="card" style="border-top: 4px solid var(--safe-primary); position: relative;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #10b981 0%, #0284c7 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                    VG
+                </div>
+                <div>
+                    <span class="badge badge-safe" style="font-size: 0.72rem; margin-bottom: 0.2rem;">Project Guide</span>
+                    <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-main);">Vaishali Gaikwad Mam</h3>
+                    <div style="font-size: 0.82rem; color: var(--text-muted);">Faculty Project Supervisor</div>
+                </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                Provided academic guidance, domain expertise in environmental parameters, architectural supervision, and project evaluation.
+            </p>
+            <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-subtle); font-size: 0.78rem; color: var(--primary-700); font-weight: 600;">
+                Department of Computer Science and Design
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- System Feature Highlights -->
+<section style="margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 650px; margin: 0 auto 2.5rem auto;">
+        <span class="badge" style="background: var(--primary-100); color: var(--primary-800); margin-bottom: 0.5rem;">Key System Capabilities</span>
+        <h2 style="font-size: 2rem; font-weight: 800; color: var(--text-main);">Comprehensive Water Analytics</h2>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Designed according to rigorous engineering methodologies, linking sensory measurements with automated potability diagnosis.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+        <div class="card">
+            <div class="stat-icon primary" style="margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Tri-Sensor Multi-Parametric Input</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Accurate simultaneous assessment of Hydrogen Potential (pH), Total Dissolved Solids (TDS in mg/L), and Nephelometric Turbidity (NTU).</p>
+        </div>
+
+        <div class="card">
+            <div class="stat-icon safe" style="margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Automated Quality Classification</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Algorithmic evaluation assigns Safe, Moderate, or Unsafe potability statuses with a computed 0-100 Water Quality Index (WQI).</p>
+        </div>
+
+        <div class="card">
+            <div class="stat-icon moderate" style="margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Certified Downloadable PDF Reports</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Instant generation of print-ready laboratory certificates equipped with WHO benchmark tables and remediation instructions.</p>
+        </div>
+
+        <div class="card">
+            <div class="stat-icon primary" style="margin-bottom: 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Interactive Trend Visualizations</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem;">Dynamic time-series charts powered by Chart.js allow students and researchers to track water safety patterns over time.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Critical Parameters Section -->
+<section style="margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 650px; margin: 0 auto 2rem auto;">
+        <span class="badge badge-safe">WHO & BIS Benchmark Criteria</span>
+        <h2 style="font-size: 2rem; font-weight: 800; color: var(--text-main); margin-top: 0.5rem;">Monitored Water Parameters</h2>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">Understanding the physiological and physical significance of the monitored parameters.</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+        <!-- pH Parameter -->
+        <div class="card" style="border-left: 5px solid #0284c7;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-800);">1. pH Level (0 - 14)</h3>
+                <span class="badge" style="background:var(--primary-100); color:var(--primary-800);">Target: 6.5 &ndash; 8.5</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Measures acidity or basicity of water. Water below 6.5 is acidic and corrosive, dissolving toxic heavy metals from pipes. Water above 8.5 is alkali, causing incrustation and bitter taste.
+            </p>
+            <div style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                <strong>Sensor Used:</strong> E-201-C Industrial Glass Bulb pH Electrode with BNC Interface
+            </div>
+        </div>
+
+        <!-- TDS Parameter -->
+        <div class="card" style="border-left: 5px solid #10b981;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #047857;">2. Total Dissolved Solids</h3>
+                <span class="badge badge-safe">Limit: &lt; 500 mg/L</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Represents cumulative minerals, salts, and metals dissolved in water. Elevated TDS (&gt;900 mg/L) causes renal load, pipe clogging, and severe gastrointestinal discomfort.
+            </p>
+            <div style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                <strong>Sensor Used:</strong> Dual Titanium Pin Analog Electrical Conductivity (EC/TDS) Probe
+            </div>
+        </div>
+
+        <!-- Turbidity Parameter -->
+        <div class="card" style="border-left: 5px solid #f59e0b;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #b45309;">3. Turbidity (NTU)</h3>
+                <span class="badge badge-moderate">Limit: &le; 5.0 NTU</span>
+            </div>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                Measures relative water clarity caused by suspended matter. Turbid water harbors pathogens, viruses, and shields bacteria from ultraviolet and chlorine purification.
+            </p>
+            <div style="background: #f8fafc; padding: 0.75rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                <strong>Sensor Used:</strong> Infrared Optical Turbidity Sensor (TSD-10 / DF-Robot Gravity)
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Interactive Simulator Widget (Demonstration Ready) -->
+<section id="quick-calculator" class="card" style="background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%); border: 1.5px solid var(--primary-200); padding: 2.5rem; margin-bottom: 3.5rem;">
+    <div style="text-align: center; max-width: 650px; margin: 0 auto 2rem auto;">
+        <span class="badge" style="background: var(--primary-600); color: white;">Live College Demonstration Mode</span>
+        <h2 style="font-size: 1.9rem; font-weight: 800; color: var(--primary-900); margin-top: 0.5rem;">
+            Interactive Water Quality Simulator
+        </h2>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Test any sample values below in real time. The mathematical model automatically recalculates the Water Quality Index (WQI) and assigns instantaneous potability status.
+        </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 2.5rem; align-items: center;">
+        <div>
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between;">
+                    <label class="form-label" for="ph_input">pH Level (0.00 &ndash; 14.00)</label>
+                    <span id="ph_display_val" style="font-weight: 700; color: var(--primary-700);">7.40</span>
+                </div>
+                <input type="range" min="3.0" max="11.0" step="0.05" value="7.40" class="form-control" id="ph_input" oninput="document.getElementById('ph_display_val').innerText = parseFloat(this.value).toFixed(2)">
+                <div class="form-hint">WHO Drinking Safe: 6.5 &ndash; 8.5 &bull; Neutral: 7.0</div>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between;">
+                    <label class="form-label" for="tds_input">Total Dissolved Solids (TDS in mg/L or ppm)</label>
+                    <span id="tds_display_val" style="font-weight: 700; color: var(--primary-700);">210 ppm</span>
+                </div>
+                <input type="range" min="10" max="1500" step="10" value="210" class="form-control" id="tds_input" oninput="document.getElementById('tds_display_val').innerText = this.value + ' ppm'">
+                <div class="form-hint">WHO Ideal: &lt;300 &bull; Safe: &lt;500 &bull; Unsafe: &gt;900</div>
+            </div>
+
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between;">
+                    <label class="form-label" for="turbidity_input">Turbidity (NTU)</label>
+                    <span id="turb_display_val" style="font-weight: 700; color: var(--primary-700);">1.20 NTU</span>
+                </div>
+                <input type="range" min="0.1" max="25.0" step="0.1" value="1.20" class="form-control" id="turbidity_input" oninput="document.getElementById('turb_display_val').innerText = parseFloat(this.value).toFixed(1) + ' NTU'">
+                <div class="form-hint">WHO Target: &lt;1.0 NTU &bull; Safe: &le;5.0 NTU &bull; Unsafe: &gt;10 NTU</div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset(7.3, 140, 0.5)">Preset: Clean Tap (Safe)</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset(8.7, 620, 6.5)">Preset: Well Water (Moderate)</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setPreset(5.2, 1150, 18.0)">Preset: Contaminated Pond (Unsafe)</button>
+            </div>
+        </div>
+
+        <div style="background: white; border-radius: var(--radius-lg); padding: 1.75rem; border: 1px solid var(--border-light); text-align: center; box-shadow: var(--shadow-sm);">
+            <div style="margin-bottom: 0.75rem;">
+                <span id="preview_badge" class="badge badge-safe">
+                    <span class="pulse-dot"></span> SAFE
+                </span>
+            </div>
+
+            <div class="gauge-meter-wrapper" style="margin: 1rem 0;">
+                <div id="preview_circle" class="wqi-circular-display">
+                    <span id="preview_wqi" class="wqi-number">92</span>
+                    <span class="wqi-label">WQI SCORE</span>
+                </div>
+            </div>
+
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+                <div><strong>pH:</strong> <span id="mini_ph_status" style="font-weight: 600;">Safe</span></div>
+                <div><strong>TDS:</strong> <span id="mini_tds_status" style="font-weight: 600;">Safe</span></div>
+                <div><strong>Turbidity:</strong> <span id="mini_turb_status" style="font-weight: 600;">Safe</span></div>
+            </div>
+
+            {% if current_user %}
+                <a href="{{ url_for('new_test') }}" class="btn btn-primary" style="width: 100%;">Record Test in Database &rarr;</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary" style="width: 100%;">Sign In to Save & Download PDF &rarr;</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Water Quality Classification Standards Table -->
+<section style="margin-bottom: 2rem;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Potability Classification Criteria
+            </h2>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">IS 10500:2012 & WHO Guidelines</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Status Classification</th>
+                        <th>WQI Score Range</th>
+                        <th>pH Threshold</th>
+                        <th>TDS Threshold</th>
+                        <th>Turbidity Limit</th>
+                        <th>Recommended Remediation Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge badge-safe"><span class="pulse-dot"></span> SAFE</span></td>
+                        <td><strong>80 &ndash; 100</strong></td>
+                        <td>6.5 &ndash; 8.5</td>
+                        <td>&lt; 500 mg/L</td>
+                        <td>&le; 5.0 NTU</td>
+                        <td>Directly potable; safe for daily human consumption. Regular maintenance advised.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-moderate"><span class="pulse-dot"></span> MODERATE</span></td>
+                        <td><strong>50 &ndash; 79</strong></td>
+                        <td>6.0 &ndash; 6.49 or 8.51 &ndash; 9.0</td>
+                        <td>500 &ndash; 900 mg/L</td>
+                        <td>5.1 &ndash; 10.0 NTU</td>
+                        <td>Basic filtration (multi-grade sand filter) and boiling recommended before drinking.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge badge-unsafe"><span class="pulse-dot"></span> UNSAFE</span></td>
+                        <td><strong>&lt; 50</strong></td>
+                        <td>&lt; 6.0 or &gt; 9.0</td>
+                        <td>&gt; 900 mg/L</td>
+                        <td>&gt; 10.0 NTU</td>
+                        <td><strong>Hazardous:</strong> Requires Reverse Osmosis (RO), pH neutralization, &amp; UV sterilization.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function setPreset(ph, tds, turb) {
+    const phInput = document.getElementById('ph_input');
+    const tdsInput = document.getElementById('tds_input');
+    const turbInput = document.getElementById('turbidity_input');
+
+    if (phInput && tdsInput && turbInput) {
+        phInput.value = ph;
+        tdsInput.value = tds;
+        turbInput.value = turb;
+        document.getElementById('ph_display_val').innerText = ph.toFixed(2);
+        document.getElementById('tds_display_val').innerText = tds + ' ppm';
+        document.getElementById('turb_display_val').innerText = turb.toFixed(1) + ' NTU';
+        phInput.dispatchEvent(new Event('input'));
+    }
+}
+</script>
+{% endblock %}

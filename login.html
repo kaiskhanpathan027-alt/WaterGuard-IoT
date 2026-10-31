@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In with WaterGuard ID{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="max-width: 480px;">
+    <div class="auth-header">
+        <div class="brand-icon" style="margin: 0 auto 1rem auto; width: 48px; height: 48px;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+        </div>
+        <h2>Sign In to WaterGuard</h2>
+        <p>Enter your custom WaterGuard ID or registered email to access your testing terminal.</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('login', next=request.args.get('next')) }}">
+        <div class="form-group">
+            <label class="form-label" for="login_input">WaterGuard ID / Custom Username or Email</label>
+            <input type="text" id="login_input" name="login_input" class="form-control" placeholder="e.g. kais.khan@water.guard or student@college.edu" value="{{ login_input or '' }}" required autofocus>
+            <div class="form-hint">Format: <code>firstname.lastname@water.guard</code></div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your account password" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; padding: 0.75rem;">
+            Sign In to Dashboard &rarr;
+        </button>
+    </form>
+
+    <!-- Quick Demonstration Fill Buttons with Custom Usernames -->
+    <div class="demo-account-box" style="margin-top: 1.5rem;">
+        <div style="font-weight: 700; color: var(--primary-900); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            College Demonstration Quick-Access:
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.78rem; margin-bottom: 0.6rem;">
+            Click below to automatically fill credentials with custom WaterGuard usernames:
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoAccount('kais')" style="font-size: 0.75rem;">
+                &bull; Kais Khan
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoAccount('rajeshwar')" style="font-size: 0.75rem;">
+                &bull; Rajeshwar Gaurkar
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoAccount('student')" style="font-size: 0.75rem;">
+                &bull; Alex Turner
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="fillDemoAccount('admin')" style="font-size: 0.75rem;">
+                &bull; System Admin
+            </button>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted);">
+        Don't have an account? <a href="{{ url_for('register') }}" style="font-weight: 600;">Register here</a>
+    </div>
+</div>
+{% endblock %}

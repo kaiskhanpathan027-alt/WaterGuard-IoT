@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}Record Water Sample{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h1 style="font-size: 1.85rem; font-weight: 800; color: var(--text-main);">
+        Water Quality Testing Terminal
+    </h1>
+    <p style="color: var(--text-muted); font-size: 0.92rem;">
+        Input raw sensory telemetry from pH electrode, TDS conductivity probe, and Turbidity sensor.
+    </p>
+</div>
+
+<div style="display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 2rem; align-items: start;">
+    <!-- Left Column: Testing Input Form -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+                Sample &amp; Sensor Telemetry
+            </h2>
+            <div style="display: flex; gap: 0.35rem;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setFormPreset(7.3, 145, 0.45)" style="font-size: 0.72rem;">Safe Preset</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setFormPreset(8.6, 680, 6.8)" style="font-size: 0.72rem;">Moderate Preset</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="setFormPreset(5.4, 1120, 22.0)" style="font-size: 0.72rem;">Unsafe Preset</button>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('new_test') }}" id="waterTestForm">
+            <!-- Sample Metadata -->
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="sample_name">Sample Designation / Name *</label>
+                    <input type="text" id="sample_name" name="sample_name" class="form-control" placeholder="e.g. Science Block Water Cooler" required value="Campus Drinking Station #1">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="location">Sampling Location *</label>
+                    <input type="text" id="location" name="location" class="form-control" placeholder="e.g. Main Quadrangle Ground Floor" required value="Academic Block A - Floor 1">
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="source_type">Water Source Category *</label>
+                    <select id="source_type" name="source_type" class="form-control" required>
+                        <option value="Tap Water / Municipal Supply" selected>Tap Water / Municipal Supply</option>
+                        <option value="Groundwater / Borewell">Groundwater / Borewell</option>
+                        <option value="RO Purified / Commercial Dispenser">RO Purified / Commercial Dispenser</option>
+                        <option value="Rainwater Harvesting System">Rainwater Harvesting System</option>
+                        <option value="Surface Water (Lake / River / Pond)">Surface Water (Lake / River / Pond)</option>
+                        <option value="Industrial / Storm Runoff">Industrial / Storm Runoff</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="tested_by">Lead Analyst / Operator</label>
+                    <input type="text" id="tested_by" name="tested_by" class="form-control" value="{{ current_user.full_name or current_user.username }}">
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 1.5rem 0;">
+
+            <!-- Parameter 1: pH -->
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <label class="form-label" for="ph_input" style="font-weight: 700; color: var(--primary-900);">
+                        1. Hydrogen Potential (pH Scale: 0.00 &ndash; 14.00) *
+                    </label>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: #0284c7;" id="ph_num_display">7.20</span>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="range" min="2.0" max="12.0" step="0.05" value="7.20" class="form-control" id="ph_slider" style="flex: 1;" oninput="syncParam('ph', this.value)">
+                    <input type="number" step="0.01" min="0" max="14" value="7.20" class="form-control" id="ph_input" name="ph" style="width: 100px; text-align: center; font-weight: 700;" required oninput="syncParam('ph', this.value, true)">
+                </div>
+                <div class="form-hint" style="display:flex; justify-content:space-between;">
+                    <span>Acidic (&lt; 6.5)</span>
+                    <strong style="color: var(--safe-primary);">WHO Safe Range: 6.5 &ndash; 8.5</strong>
+                    <span>Alkaline (&gt; 8.5)</span>
+                </div>
+            </div>
+
+            <!-- Parameter 2: TDS -->
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <label class="form-label" for="tds_input" style="font-weight: 700; color: var(--primary-900);">
+                        2. Total Dissolved Solids (TDS in mg/L / ppm) *
+                    </label>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: #8b5cf6;" id="tds_num_display">180 ppm</span>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="range" min="10" max="1600" step="10" value="180" class="form-control" id="tds_slider" style="flex: 1;" oninput="syncParam('tds', this.value)">
+                    <input type="number" step="1" min="0" max="10000" value="180" class="form-control" id="tds_input" name="tds" style="width: 100px; text-align: center; font-weight: 700;" required oninput="syncParam('tds', this.value, true)">
+                </div>
+                <div class="form-hint" style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--safe-primary);">Excellent (&lt;300)</span>
+                    <strong style="color: var(--safe-primary);">Permissible (&lt;500)</strong>
+                    <span style="color:var(--unsafe-primary);">Unacceptable (&gt;900)</span>
+                </div>
+            </div>
+
+            <!-- Parameter 3: Turbidity -->
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <label class="form-label" for="turbidity_input" style="font-weight: 700; color: var(--primary-900);">
+                        3. Turbidity (Optical Clarity in NTU) *
+                    </label>
+                    <span style="font-weight: 800; font-size: 1.1rem; color: #f59e0b;" id="turb_num_display">0.80 NTU</span>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <input type="range" min="0.05" max="30.0" step="0.05" value="0.80" class="form-control" id="turbidity_slider" style="flex: 1;" oninput="syncParam('turb', this.value)">
+                    <input type="number" step="0.01" min="0" max="1000" value="0.80" class="form-control" id="turbidity_input" name="turbidity" style="width: 100px; text-align: center; font-weight: 700;" required oninput="syncParam('turb', this.value, true)">
+                </div>
+                <div class="form-hint" style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--safe-primary);">Optimal (&lt;1 NTU)</span>
+                    <strong style="color: var(--safe-primary);">WHO Drinking Limit: &le; 5.0 NTU</strong>
+                    <span style="color:var(--unsafe-primary);">Muddy / Murky (&gt;10 NTU)</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="notes">Laboratory Observations &amp; Physical Odor/Color</label>
+                <textarea id="notes" name="notes" class="form-control" placeholder="Enter physical observations, room temp, sensor calibration notes (optional)...">Clear liquid, odorless, tested at 24°C ambient room temperature.</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; margin-top: 1rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                Execute Analysis &amp; Generate Certificate &rarr;
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: Dynamic Live Potability Preview Card -->
+    <div class="live-preview-box">
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--primary-800); letter-spacing: 0.5px;">
+                Instant Live Diagnosis
+            </span>
+            <h3 style="font-size: 1.25rem; font-weight: 800; color: var(--primary-900); margin-top: 0.25rem;">
+                Potability Evaluation
+            </h3>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 1rem;">
+            <span id="preview_badge" class="badge badge-safe">
+                <span class="pulse-dot"></span> SAFE
+            </span>
+        </div>
+
+        <div class="gauge-meter-wrapper">
+            <div id="preview_circle" class="wqi-circular-display">
+                <span id="preview_wqi" class="wqi-number">95</span>
+                <span class="wqi-label">WQI INDEX</span>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+                Computed Water Quality Index (0 &ndash; 100 scale)
+            </div>
+        </div>
+
+        <div class="param-mini-cards">
+            <div class="param-mini-row">
+                <span style="font-size: 0.85rem; font-weight: 600;">pH Status:</span>
+                <span id="mini_ph_status" style="font-size: 0.85rem; font-weight: 700; color: var(--safe-primary);">Safe</span>
+            </div>
+            <div class="param-mini-row">
+                <span style="font-size: 0.85rem; font-weight: 600;">TDS Status:</span>
+                <span id="mini_tds_status" style="font-size: 0.85rem; font-weight: 700; color: var(--safe-primary);">Safe</span>
+            </div>
+            <div class="param-mini-row">
+                <span style="font-size: 0.85rem; font-weight: 600;">Turbidity Status:</span>
+                <span id="mini_turb_status" style="font-size: 0.85rem; font-weight: 700; color: var(--safe-primary);">Safe</span>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; background: white; padding: 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); font-size: 0.8rem; color: var(--text-muted);">
+            <div style="font-weight: 700; color: var(--primary-900); margin-bottom: 0.25rem;">
+                Evaluation Note:
+            </div>
+            Values are updated instantaneously as you slide or type. Upon submission, a permanent cryptographically stamped record and laboratory PDF are produced.
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function syncParam(type, val, fromInput = false) {
+    if (type === 'ph') {
+        const num = parseFloat(val) || 7.0;
+        if (fromInput) {
+            document.getElementById('ph_slider').value = num;
+        } else {
+            document.getElementById('ph_input').value = num.toFixed(2);
+        }
+        document.getElementById('ph_num_display').innerText = num.toFixed(2);
+        document.getElementById('ph_input').dispatchEvent(new Event('input'));
+    } else if (type === 'tds') {
+        const num = parseFloat(val) || 0;
+        if (fromInput) {
+            document.getElementById('tds_slider').value = num;
+        } else {
+            document.getElementById('tds_input').value = Math.round(num);
+        }
+        document.getElementById('tds_num_display').innerText = Math.round(num) + ' ppm';
+        document.getElementById('tds_input').dispatchEvent(new Event('input'));
+    } else if (type === 'turb') {
+        const num = parseFloat(val) || 0;
+        if (fromInput) {
+            document.getElementById('turbidity_slider').value = num;
+        } else {
+            document.getElementById('turbidity_input').value = num.toFixed(2);
+        }
+        document.getElementById('turb_num_display').innerText = num.toFixed(2) + ' NTU';
+        document.getElementById('turbidity_input').dispatchEvent(new Event('input'));
+    }
+}
+
+function setFormPreset(ph, tds, turb) {
+    syncParam('ph', ph);
+    syncParam('tds', tds);
+    syncParam('turb', turb);
+}
+</script>
+{% endblock %}
