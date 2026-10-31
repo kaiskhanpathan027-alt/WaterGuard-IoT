@@ -11,8 +11,9 @@ from functools import wraps
 from datetime import datetime
 from flask import (
     Flask, render_template, request, redirect, url_for,
-    flash, session, g, jsonify, send_file, Response
+    flash, session, g, jsonify, send_file, Response, send_from_directory
 )
+import jinja2
 from werkzeug.security import check_password_hash
 import database as db
 from water_quality import analyze_water_sample
@@ -20,6 +21,35 @@ from pdf_generator import generate_water_report_pdf
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'water-guard-sec-token-college-engg-2026'
+
+# Configure Jinja ChoiceLoader to support both structured 'templates/' folder and root uploads
+base_dir = os.path.dirname(os.path.abspath(__file__))
+app.jinja_loader = jinja2.ChoiceLoader([
+    jinja2.FileSystemLoader(os.path.join(base_dir, 'templates')),
+    jinja2.FileSystemLoader(base_dir)
+])
+
+# Universal static file fallback for cloud platforms where files may be in root
+@app.route('/static/css/<path:filename>')
+def serve_static_css(filename):
+    css_dir = os.path.join(base_dir, 'static', 'css')
+    if os.path.exists(os.path.join(css_dir, filename)):
+        return send_from_directory(css_dir, filename)
+    return send_from_directory(base_dir, filename)
+
+@app.route('/static/js/<path:filename>')
+def serve_static_js(filename):
+    js_dir = os.path.join(base_dir, 'static', 'js')
+    if os.path.exists(os.path.join(js_dir, filename)):
+        return send_from_directory(js_dir, filename)
+    return send_from_directory(base_dir, filename)
+
+@app.route('/static/<path:filename>')
+def serve_static_root(filename):
+    static_dir = os.path.join(base_dir, 'static')
+    if os.path.exists(os.path.join(static_dir, filename)):
+        return send_from_directory(static_dir, filename)
+    return send_from_directory(base_dir, filename)
 
 # Ensure database is initialized on startup
 with app.app_context():
